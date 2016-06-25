@@ -248,13 +248,13 @@ int wait(void) {
 //      via swtch back to the scheduler.
 void scheduler(void) {
   struct proc *p;
+  // https://github.com/jeffallen/xv6/commit/65099b66c0ad4eba9f4a9003d34d2308b3f4263f
   int ran;
 
   for (;;) {
     // Enable interrupts on this processor.
     sti();
 
-    // https://github.com/jeffallen/xv6/commit/65099b66c0ad4eba9f4a9003d34d2308b3f4263f
     ran = 0;
 
     // Loop over process table looking for process to run.

@@ -248,10 +248,14 @@ int wait(void) {
 //      via swtch back to the scheduler.
 void scheduler(void) {
   struct proc *p;
+  int ran;
 
   for (;;) {
     // Enable interrupts on this processor.
     sti();
+
+    // https://github.com/jeffallen/xv6/commit/65099b66c0ad4eba9f4a9003d34d2308b3f4263f
+    ran = 0;
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
@@ -262,6 +266,7 @@ void scheduler(void) {
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
+      ran = 1;
       proc = p;
       switchuvm(p);
       p->state = RUNNING;
@@ -273,6 +278,10 @@ void scheduler(void) {
       proc = 0;
     }
     release(&ptable.lock);
+
+    if (ran == 0) {
+      halt();
+    }
   }
 }
 
